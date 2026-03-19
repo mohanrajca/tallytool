@@ -1,0 +1,2322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MS MAKESIMPLE - Tally Converter Pro</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg: #fdfbf7;
+      --surface: #ffffff;
+      --surface2: #f8f5ee;
+      --surface3: #eee9d9;
+      --border: #e2d8c3;
+      --accent: #d4af37;
+      --accent2: #b8860b;
+      --accent3: #c5a059;
+      --green: #10b981;
+      --red: #ef4444;
+      --orange: #f59e0b;
+      --text: #1a1a1a;
+      --text2: #4a4a4a;
+      --text3: #6b7280;
+      --radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* LOGIN SCREEN */
+    .login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #ffffff 0%, #fcfcfc 50%, #f5f5f5 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-screen::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.15), transparent 70%);
+      top: -200px;
+      right: -100px;
+    }
+
+    .login-screen::after {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(184, 134, 11, 0.1), transparent 70%);
+      bottom: -100px;
+      left: -50px;
+    }
+
+    .login-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 420px;
+      max-width: 95vw;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+    }
+
+    .login-box .brand {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .login-box .brand h1 {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .login-box .brand p {
+      color: var(--text2);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .login-box .brand .sub {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: all .2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+    }
+
+    .btn-sm {
+      width: auto;
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+
+    .btn-danger {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: underline;
+      margin-top: 12px;
+      display: block;
+      text-align: center;
+    }
+
+    .error-msg {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .success-msg {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    /* MAIN APP */
+    .app-container {
+      display: none;
+    }
+
+    .top-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .top-bar .logo {
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .top-bar .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .top-bar .user-badge {
+      background: var(--surface2);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--text2);
+      border: 1px solid var(--border);
+    }
+
+    .top-bar .user-badge.admin {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .top-bar .user-badge.expired {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .main-content {
+      display: flex;
+      min-height: calc(100vh - 57px);
+    }
+
+    .sidebar {
+      width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 20px 0;
+      flex-shrink: 0;
+    }
+
+    .sidebar .nav-item {
+      padding: 12px 24px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar .nav-item:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .sidebar .nav-item.active {
+      background: rgba(212, 175, 55, 0.1);
+      color: var(--accent);
+      border-left-color: var(--accent);
+    }
+
+    .sidebar .nav-section {
+      padding: 8px 24px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 16px;
+    }
+
+    .sidebar .nav-item .icon {
+      width: 20px;
+      text-align: center;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--text2);
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .converter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .converter-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .converter-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .converter-card .cc-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+
+    .converter-card h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .converter-card p {
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    .cc-blue .cc-icon {
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--accent);
+    }
+
+    .cc-purple .cc-icon {
+      background: rgba(184, 134, 11, 0.15);
+      color: var(--accent2);
+    }
+
+    .cc-cyan .cc-icon {
+      background: rgba(197, 160, 89, 0.15);
+      color: var(--accent3);
+    }
+
+    .cc-green .cc-icon {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green);
+    }
+
+    .cc-orange .cc-icon {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--orange);
+    }
+
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      background: var(--surface2);
+    }
+
+    .upload-zone:hover,
+    .upload-zone.dragover {
+      border-color: var(--accent);
+      background: rgba(212, 175, 55, 0.05);
+    }
+
+    .upload-zone .uz-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+      opacity: .5;
+    }
+
+    .upload-zone p {
+      font-size: 13px;
+      color: var(--text2);
+    }
+
+    .upload-zone .uz-sub {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 4px;
+    }
+
+    .config-section {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 16px 0;
+    }
+
+    .config-section h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 12px;
+    }
+
+    .config-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+
+    .config-row .form-group {
+      flex: 1;
+      min-width: 180px;
+      margin-bottom: 0;
+    }
+
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 16px;
+    }
+
+    .preview-table th {
+      background: var(--surface3);
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text2);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .preview-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(226, 216, 195, 0.5);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+
+    .preview-table tr:hover td {
+      background: var(--surface2);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 22px;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .stat-card .stat-label {
+      font-size: 11px;
+      color: var(--text3);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-card .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+
+    .stat-card .stat-value.blue {
+      color: var(--accent);
+    }
+
+    .stat-card .stat-value.green {
+      color: var(--green);
+    }
+
+    .stat-card .stat-value.purple {
+      color: var(--accent2);
+    }
+
+    .stat-card .stat-value.orange {
+      color: var(--orange);
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .action-bar .btn {
+      width: auto;
+      padding: 12px 24px;
+    }
+
+    /* User management */
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .users-table th {
+      background: var(--surface3);
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text2);
+    }
+
+    .users-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .users-table tr:hover td {
+      background: var(--surface2);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-active {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green);
+    }
+
+    .badge-expired {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--red);
+    }
+
+    .badge-admin {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--orange);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      width: 480px;
+      max-width: 95vw;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 2px;
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 20px;
+    }
+
+    .tab-bar .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text2);
+      transition: all .15s;
+    }
+
+    .tab-bar .tab.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .expired-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+    }
+
+    .expired-overlay.show {
+      display: flex;
+    }
+
+    .expired-box {
+      background: var(--surface);
+      border: 1px solid var(--red);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .expired-box h2 {
+      color: var(--red);
+      margin-bottom: 12px;
+    }
+
+    .expired-box p {
+      color: var(--text2);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .expired-box .phone {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-top: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: var(--surface3);
+      border-radius: 2px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    .progress-bar .fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .3s;
+      border-radius: 2px;
+    }
+
+    @media(max-width:768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main-content {
+        flex-direction: column;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .converter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .config-row {
+        flex-direction: column;
+      }
+
+      .top-bar {
+        padding: 12px 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <div class="brand">
+        <h1>MS MAKESIMPLE</h1>
+        <p>Tally Converter Pro</p>
+        <p class="sub">GST • Sales • Purchase • Bank Statement → Tally</p>
+      </div>
+      <div id="loginForm">
+        <div class="error-msg" id="loginError"></div>
+        <div class="form-group">
+          <label>Login ID (Mobile Number)</label>
+          <input type="tel" id="loginMobile" placeholder="Enter 10-digit mobile number" maxlength="10">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter password">
+        </div>
+        <button class="btn btn-primary" onclick="handleLogin()">Sign In</button>
+        <button class="link-btn" onclick="showRegister()">New user? Register here</button>
+      </div>
+      <div id="registerForm" style="display:none">
+        <div class="error-msg" id="regError"></div>
+        <div class="success-msg" id="regSuccess"></div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="regName" placeholder="Enter your full name">
+        </div>
+        <div class="form-group">
+          <label>Mobile Number (Login ID)</label>
+          <input type="tel" id="regMobile" placeholder="10-digit mobile number" maxlength="10">
+        </div>
+        <div class="form-group">
+          <label>Date of Birth (Recovery Key)</label>
+          <input type="date" id="regDOB">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="regPassword" placeholder="Min 6 characters">
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" id="regConfirm" placeholder="Confirm password">
+        </div>
+        <button class="btn btn-primary" onclick="handleRegister()">Register</button>
+        <button class="link-btn" onclick="showLogin()">Already have an account? Sign In</button>
+      </div>
+      <div id="resetForm" style="display:none">
+        <div class="error-msg" id="resetError"></div>
+        <div class="success-msg" id="resetSuccess"></div>
+        <div class="form-group">
+          <label>Mobile Number</label>
+          <input type="tel" id="resetMobile" placeholder="10-digit mobile" maxlength="10">
+        </div>
+        <div class="form-group">
+          <label>Date of Birth (Recovery Key)</label>
+          <input type="date" id="resetDOB">
+        </div>
+        <div class="form-group">
+          <label>New Password</label>
+          <input type="password" id="resetPassword" placeholder="Min 6 characters">
+        </div>
+        <button class="btn btn-primary" onclick="handleReset()">Reset Password</button>
+        <button class="link-btn" onclick="showLogin()">Back to Sign In</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPIRED OVERLAY -->
+  <div class="expired-overlay" id="expiredOverlay">
+    <div class="expired-box">
+      <div style="font-size:48px;margin-bottom:16px;">⏰</div>
+      <h2>Account Expired</h2>
+      <p>Your account has expired. Please contact the administrator to renew your access.</p>
+      <div class="phone">📞 Admin Contact</div>
+      <p style="margin-top:8px;font-size:13px;color:var(--text3)">Contact admin to renew your subscription</p>
+      <button class="btn btn-secondary" style="margin-top:20px" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div class="app-container" id="appContainer">
+    <div class="top-bar">
+      <div class="logo">MS MAKESIMPLE</div>
+      <div class="user-info">
+        <span class="user-badge" id="userBadge"></span>
+        <button class="btn btn-sm btn-secondary" onclick="handleLogout()">Logout</button>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="sidebar">
+        <div class="nav-section">Main</div>
+        <div class="nav-item active" data-page="dashboard"><span class="icon">📊</span> Dashboard</div>
+        <div class="nav-section">Conversions</div>
+        <div class="nav-item" data-page="sales"><span class="icon">🧾</span> Sales → Tally</div>
+        <div class="nav-item" data-page="gstr2b"><span class="icon">📥</span> GSTR-2B → Tally</div>
+        <div class="nav-item" data-page="bank"><span class="icon">🏦</span> Bank Stmt → Tally</div>
+        <div class="nav-item" data-page="gstr1"><span class="icon">📤</span> GSTR-1 → Tally</div>
+        <div class="nav-section">Admin</div>
+        <div class="nav-item" data-page="users" id="navUsers"><span class="icon">👥</span> User Management</div>
+        <div class="nav-item" data-page="settings"><span class="icon">⚙️</span> Settings</div>
+      </div>
+      <div class="content-area">
+
+        <!-- DASHBOARD -->
+        <div class="page active" id="page-dashboard">
+          <h2 class="page-title">Dashboard</h2>
+          <p class="page-subtitle">Convert your GST data files into Tally-ready Excel templates & XML</p>
+          <div class="converter-grid">
+            <div class="converter-card cc-blue" onclick="navigateTo('sales')">
+              <div class="cc-icon">🧾</div>
+              <h4>Sales Register → Tally</h4>
+              <p>Convert GST Sales Register to Tally Accounting Voucher format with inventory, taxes & round-off</p>
+            </div>
+            <div class="converter-card cc-purple" onclick="navigateTo('gstr2b')">
+              <div class="cc-icon">📥</div>
+              <h4>GSTR-2B → Tally</h4>
+              <p>Convert GSTR-2B Excel to Tally Purchase Voucher template with ITC details & supplier mapping</p>
+            </div>
+            <div class="converter-card cc-cyan" onclick="navigateTo('bank')">
+              <div class="cc-icon">🏦</div>
+              <h4>Bank Statement → Tally</h4>
+              <p>Convert bank statements to Tally Payment/Receipt vouchers with auto-narration</p>
+            </div>
+            <div class="converter-card cc-green" onclick="navigateTo('gstr1')">
+              <div class="cc-icon">📤</div>
+              <h4>GSTR-1 → Tally</h4>
+              <p>Convert GSTR-1 JSON/Excel to Tally Sales Voucher template</p>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Output Formats</h3>
+            <div class="tab-bar" style="max-width:400px">
+              <div class="tab active">📊 Tally Excel Template</div>
+              <div class="tab">📄 Tally XML Import</div>
+            </div>
+            <p style="font-size:13px;color:var(--text2);line-height:1.7">
+              <strong>Excel Template:</strong> Generates Tally Prime compatible Accounting Voucher Excel format with
+              Voucher Date, Voucher Number, Ledger Name, Ledger Amount, Dr/Cr, Item Name, Quantity, Rate, Amount, and
+              Change Mode columns.<br><br>
+              <strong>XML Import:</strong> Generates Tally XML format for direct import via Tally Gateway with full
+              inventory details, reference numbers, narrations, GST details, and bill allocations.
+            </p>
+          </div>
+        </div>
+
+        <!-- SALES CONVERTER -->
+        <div class="page" id="page-sales">
+          <h2 class="page-title">Sales Register → Tally</h2>
+          <p class="page-subtitle">Upload your Sales Register Excel to convert into Tally format</p>
+          <div class="card">
+            <h3>Upload Sales Register</h3>
+            <div class="upload-zone" id="salesUpload" onclick="document.getElementById('salesFile').click()">
+              <div class="uz-icon">📁</div>
+              <p>Click to upload or drag & drop your Sales Register Excel</p>
+              <p class="uz-sub">Columns: Bill No, Ledger, Sales Ledger, GST No, Stock Item, Total Amount, Disc Amt,
+                SGST, CGST, IGST, Total, Round Off, Gold Wt, Silver Wt</p>
+            </div>
+            <input type="file" id="salesFile" accept=".xlsx,.xls,.csv" onchange="handleSalesUpload(this)">
+            <div id="salesFileName" style="margin-top:10px;font-size:13px;color:var(--green);display:none"></div>
+          </div>
+          <div id="salesConfig" class="hidden">
+            <div class="card">
+              <h3>Configuration</h3>
+              <div class="config-section">
+                <h4>Voucher Settings</h4>
+                <div class="config-row">
+                  <div class="form-group">
+                    <label>Voucher Date</label>
+                    <input type="date" id="salesVoucherDate">
+                  </div>
+                  <div class="form-group">
+                    <label>Sales Ledger (Local)</label>
+                    <input type="text" id="salesLedgerLocal" value="GST SALES" placeholder="GST SALES">
+                  </div>
+                  <div class="form-group">
+                    <label>Sales Ledger (Interstate)</label>
+                    <input type="text" id="salesLedgerInterstate" value="IGST SALES" placeholder="IGST SALES">
+                  </div>
+                </div>
+                <div class="config-row" style="margin-top:12px">
+                  <div class="form-group">
+                    <label>CGST Ledger</label>
+                    <input type="text" id="salesCGST" value="CGST" placeholder="CGST">
+                  </div>
+                  <div class="form-group">
+                    <label>SGST Ledger</label>
+                    <input type="text" id="salesSGST" value="SGST" placeholder="SGST">
+                  </div>
+                  <div class="form-group">
+                    <label>IGST Ledger</label>
+                    <input type="text" id="salesIGST" value="IGST" placeholder="IGST">
+                  </div>
+                </div>
+                <div class="config-row" style="margin-top:12px">
+                  <div class="form-group">
+                    <label>Discount Ledger</label>
+                    <input type="text" id="salesDiscount" value="Discount Allowed" placeholder="Discount Allowed">
+                  </div>
+                  <div class="form-group">
+                    <label>Round Off Ledger</label>
+                    <input type="text" id="salesRoundOff" value="ROUND OFF" placeholder="ROUND OFF">
+                  </div>
+                  <div class="form-group">
+                    <label>Output Format</label>
+                    <select id="salesOutputFormat">
+                      <option value="excel">Tally Excel Template</option>
+                      <option value="xml">Tally XML Import</option>
+                      <option value="both">Both Excel & XML</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="stats-row" id="salesStats"></div>
+            <div class="card" id="salesPreviewCard" style="display:none">
+              <h3>Preview (First 20 vouchers)</h3>
+              <div class="table-wrap" id="salesPreview"></div>
+            </div>
+            <div class="action-bar">
+              <button class="btn btn-primary btn-sm" onclick="convertSales()">🔄 Convert & Download</button>
+              <button class="btn btn-secondary btn-sm" onclick="previewSales()">👁 Preview Output</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- GSTR-2B CONVERTER -->
+        <div class="page" id="page-gstr2b">
+          <h2 class="page-title">GSTR-2B → Tally</h2>
+          <p class="page-subtitle">Convert GSTR-2B Excel download into Tally Purchase Voucher format</p>
+          <div class="card">
+            <h3>Upload GSTR-2B Excel</h3>
+            <div class="upload-zone" id="gstr2bUpload" onclick="document.getElementById('gstr2bFile').click()">
+              <div class="uz-icon">📁</div>
+              <p>Click to upload your GSTR-2B Excel file downloaded from GST Portal</p>
+              <p class="uz-sub">Supports B2B, B2B-CDNR, and all GSTR-2B sheets</p>
+            </div>
+            <input type="file" id="gstr2bFile" accept=".xlsx,.xls" onchange="handleGSTR2BUpload(this)">
+            <div id="gstr2bFileName" style="margin-top:10px;font-size:13px;color:var(--green);display:none"></div>
+          </div>
+          <div id="gstr2bConfig" class="hidden">
+            <div class="card">
+              <h3>Configuration</h3>
+              <div class="config-section">
+                <h4>Purchase Voucher Settings</h4>
+                <div class="config-row">
+                  <div class="form-group">
+                    <label>Purchase Ledger</label>
+                    <input type="text" id="gstr2bPurchase" value="GST PURCHASE" placeholder="GST PURCHASE">
+                  </div>
+                  <div class="form-group">
+                    <label>CGST Input Ledger</label>
+                    <input type="text" id="gstr2bCGST" value="INPUT CGST" placeholder="INPUT CGST">
+                  </div>
+                  <div class="form-group">
+                    <label>SGST Input Ledger</label>
+                    <input type="text" id="gstr2bSGST" value="INPUT SGST" placeholder="INPUT SGST">
+                  </div>
+                </div>
+                <div class="config-row" style="margin-top:12px">
+                  <div class="form-group">
+                    <label>IGST Input Ledger</label>
+                    <input type="text" id="gstr2bIGST" value="INPUT IGST" placeholder="INPUT IGST">
+                  </div>
+                  <div class="form-group">
+                    <label>Voucher Type</label>
+                    <input type="text" id="gstr2bVoucherType" value="Purchase" placeholder="Purchase">
+                  </div>
+                  <div class="form-group">
+                    <label>Output Format</label>
+                    <select id="gstr2bOutputFormat">
+                      <option value="excel">Tally Excel Template</option>
+                      <option value="xml">Tally XML Import</option>
+                      <option value="both">Both Excel & XML</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="stats-row" id="gstr2bStats"></div>
+            <div class="card" id="gstr2bPreviewCard" style="display:none">
+              <h3>Preview</h3>
+              <div class="table-wrap" id="gstr2bPreview"></div>
+            </div>
+            <div class="action-bar">
+              <button class="btn btn-primary btn-sm" onclick="convertGSTR2B()">🔄 Convert & Download</button>
+              <button class="btn btn-secondary btn-sm" onclick="previewGSTR2B()">👁 Preview Output</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- BANK STATEMENT CONVERTER -->
+        <div class="page" id="page-bank">
+          <h2 class="page-title">Bank Statement → Tally</h2>
+          <p class="page-subtitle">Convert bank statements to Tally Payment/Receipt vouchers with narration</p>
+          <div class="card">
+            <h3>Upload Bank Statement</h3>
+            <div class="upload-zone" id="bankUpload" onclick="document.getElementById('bankFile').click()">
+              <div class="uz-icon">📁</div>
+              <p>Click to upload your Bank Statement Excel/CSV</p>
+              <p class="uz-sub">Common formats: Date, Description/Narration, Debit, Credit, Balance</p>
+            </div>
+            <input type="file" id="bankFile" accept=".xlsx,.xls,.csv" onchange="handleBankUpload(this)">
+            <div id="bankFileName" style="margin-top:10px;font-size:13px;color:var(--green);display:none"></div>
+          </div>
+          <div id="bankConfig" class="hidden">
+            <div class="card">
+              <h3>Column Mapping</h3>
+              <div class="config-section">
+                <h4>Map your bank statement columns</h4>
+                <div class="config-row">
+                  <div class="form-group">
+                    <label>Date Column</label>
+                    <select id="bankColDate"></select>
+                  </div>
+                  <div class="form-group">
+                    <label>Description/Narration Column</label>
+                    <select id="bankColDesc"></select>
+                  </div>
+                  <div class="form-group">
+                    <label>Debit Column</label>
+                    <select id="bankColDebit"></select>
+                  </div>
+                </div>
+                <div class="config-row" style="margin-top:12px">
+                  <div class="form-group">
+                    <label>Credit Column</label>
+                    <select id="bankColCredit"></select>
+                  </div>
+                  <div class="form-group">
+                    <label>Reference/Cheque No Column</label>
+                    <select id="bankColRef"></select>
+                  </div>
+                  <div class="form-group">
+                    <label>Bank Ledger Name in Tally</label>
+                    <input type="text" id="bankLedger" value="Bank Account" placeholder="Bank Account">
+                  </div>
+                </div>
+                <div class="config-row" style="margin-top:12px">
+                  <div class="form-group">
+                    <label>Default Payment Ledger</label>
+                    <input type="text" id="bankPayLedger" value="Expenses" placeholder="Expenses">
+                  </div>
+                  <div class="form-group">
+                    <label>Default Receipt Ledger</label>
+                    <input type="text" id="bankRecLedger" value="Income" placeholder="Income">
+                  </div>
+                  <div class="form-group">
+                    <label>Output Format</label>
+                    <select id="bankOutputFormat">
+                      <option value="excel">Tally Excel Template</option>
+                      <option value="xml">Tally XML Import</option>
+                      <option value="both">Both Excel & XML</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="stats-row" id="bankStats"></div>
+            <div class="card" id="bankPreviewCard" style="display:none">
+              <h3>Preview</h3>
+              <div class="table-wrap" id="bankPreview"></div>
+            </div>
+            <div class="action-bar">
+              <button class="btn btn-primary btn-sm" onclick="convertBank()">🔄 Convert & Download</button>
+              <button class="btn btn-secondary btn-sm" onclick="previewBank()">👁 Preview Output</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- GSTR-1 CONVERTER -->
+        <div class="page" id="page-gstr1">
+          <h2 class="page-title">GSTR-1 → Tally</h2>
+          <p class="page-subtitle">Convert GSTR-1 Excel/JSON to Tally Sales Voucher format</p>
+          <div class="card">
+            <h3>Upload GSTR-1 File</h3>
+            <div class="upload-zone" id="gstr1Upload" onclick="document.getElementById('gstr1File').click()">
+              <div class="uz-icon">📁</div>
+              <p>Click to upload your GSTR-1 Excel or JSON file</p>
+              <p class="uz-sub">Supports B2B, B2C Large, B2C Small, CDNR, CDNUR sections</p>
+            </div>
+            <input type="file" id="gstr1File" accept=".xlsx,.xls,.json" onchange="handleGSTR1Upload(this)">
+            <div id="gstr1FileName" style="margin-top:10px;font-size:13px;color:var(--green);display:none"></div>
+          </div>
+          <div id="gstr1Config" class="hidden">
+            <div class="card">
+              <h3>Configuration</h3>
+              <div class="config-section">
+                <h4>Sales Voucher Settings</h4>
+                <div class="config-row">
+                  <div class="form-group">
+                    <label>Sales Ledger</label>
+                    <input type="text" id="gstr1Sales" value="GST SALES" placeholder="GST SALES">
+                  </div>
+                  <div class="form-group">
+                    <label>CGST Ledger</label>
+                    <input type="text" id="gstr1CGST" value="CGST" placeholder="CGST">
+                  </div>
+                  <div class="form-group">
+                    <label>SGST Ledger</label>
+                    <input type="text" id="gstr1SGST" value="SGST" placeholder="SGST">
+                  </div>
+                </div>
+                <div class="config-row" style="margin-top:12px">
+                  <div class="form-group">
+                    <label>IGST Ledger</label>
+                    <input type="text" id="gstr1IGST" value="IGST" placeholder="IGST">
+                  </div>
+                  <div class="form-group">
+                    <label>B2C Party Ledger</label>
+                    <input type="text" id="gstr1B2C" value="CASH PARTIES - B2C" placeholder="CASH PARTIES - B2C">
+                  </div>
+                  <div class="form-group">
+                    <label>Output Format</label>
+                    <select id="gstr1OutputFormat">
+                      <option value="excel">Tally Excel Template</option>
+                      <option value="xml">Tally XML Import</option>
+                      <option value="both">Both Excel & XML</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="stats-row" id="gstr1Stats"></div>
+            <div class="card" id="gstr1PreviewCard" style="display:none">
+              <h3>Preview</h3>
+              <div class="table-wrap" id="gstr1Preview"></div>
+            </div>
+            <div class="action-bar">
+              <button class="btn btn-primary btn-sm" onclick="convertGSTR1()">🔄 Convert & Download</button>
+              <button class="btn btn-secondary btn-sm" onclick="previewGSTR1()">👁 Preview Output</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- USER MANAGEMENT -->
+        <div class="page" id="page-users">
+          <h2 class="page-title">User Management</h2>
+          <p class="page-subtitle">Manage user accounts and access</p>
+          <div class="action-bar" style="margin-bottom:20px">
+            <button class="btn btn-primary btn-sm" onclick="showAddUser()">+ Add User</button>
+          </div>
+          <div class="card">
+            <div class="table-wrap">
+              <table class="users-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Mobile (Login ID)</th>
+                    <th>Role</th>
+                    <th>Registered</th>
+                    <th>Expiry</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="usersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="page" id="page-settings">
+          <h2 class="page-title">Settings</h2>
+          <p class="page-subtitle">Application preferences</p>
+          <div class="card">
+            <h3>Your Profile</h3>
+            <div class="config-row" style="margin-top:12px">
+              <div class="form-group"><label>Name</label><input type="text" id="setName" readonly></div>
+              <div class="form-group"><label>Mobile</label><input type="text" id="setMobile" readonly></div>
+            </div>
+            <div class="config-row" style="margin-top:12px">
+              <div class="form-group"><label>Role</label><input type="text" id="setRole" readonly></div>
+              <div class="form-group"><label>Account Expiry</label><input type="text" id="setExpiry" readonly></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Change Password</h3>
+            <div class="error-msg" id="pwdError"></div>
+            <div class="success-msg" id="pwdSuccess"></div>
+            <div class="config-row" style="margin-top:12px">
+              <div class="form-group"><label>Current Password</label><input type="password" id="curPwd"></div>
+              <div class="form-group"><label>New Password</label><input type="password" id="newPwd"></div>
+              <div class="form-group" style="align-self:end"><button class="btn btn-primary btn-sm"
+                  onclick="changePassword()">Update Password</button></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD USER MODAL -->
+  <div class="modal-overlay" id="addUserModal">
+    <div class="modal">
+      <h3>Add New User</h3>
+      <div class="error-msg" id="addUserError"></div>
+      <div class="form-group"><label>Full Name</label><input type="text" id="addUserName"></div>
+      <div class="form-group"><label>Mobile Number (Login ID)</label><input type="tel" id="addUserMobile"
+          maxlength="10"></div>
+      <div class="form-group"><label>Date of Birth</label><input type="date" id="addUserDOB"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="addUserPwd"></div>
+      <div class="form-group"><label>Role</label>
+        <select id="addUserRole">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Validity (Days)</label><input type="number" id="addUserDays" value="30" min="1">
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-primary" onclick="addUser()">Add User</button>
+        <button class="btn btn-secondary" onclick="closeModal('addUserModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // DATABASE (localStorage)
+    // ============================================================
+    const DB_KEY = 'msm_tally_converter';
+    const ADMIN_MOBILE = 'admin';
+    const ADMIN_PASSWORD = 'Admin7172';
+
+    function getDB() {
+      let db = localStorage.getItem(DB_KEY);
+      if (!db) {
+        db = { users: {}, sessions: {} };
+        db.users[ADMIN_MOBILE] = {
+          name: 'Administrator',
+          mobile: ADMIN_MOBILE,
+          password: ADMIN_PASSWORD,
+          dob: '1990-01-01',
+          role: 'admin',
+          registeredAt: new Date().toISOString(),
+          expiryAt: new Date(2099, 11, 31).toISOString(),
+          status: 'active'
+        };
+        saveDB(db);
+        return db;
+      }
+      return JSON.parse(db);
+    }
+
+    function saveDB(db) { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+
+    function checkExpiry(user) {
+      if (user.role === 'admin') return 'active';
+      return new Date(user.expiryAt) > new Date() ? 'active' : 'expired';
+    }
+
+    // ============================================================
+    // AUTH
+    // ============================================================
+    let currentUser = null;
+    let salesData = null, gstr2bData = null, bankData = null, gstr1Data = null;
+
+    function showLogin() {
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('resetForm').style.display = 'none';
+    }
+    function showRegister() {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('registerForm').style.display = 'block';
+      document.getElementById('resetForm').style.display = 'none';
+    }
+    function showResetForm() {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('resetForm').style.display = 'block';
+    }
+
+    function showError(id, msg) { const e = document.getElementById(id); e.textContent = msg; e.style.display = 'block'; }
+    function hideError(id) { document.getElementById(id).style.display = 'none'; }
+    function showSuccess(id, msg) { const e = document.getElementById(id); e.textContent = msg; e.style.display = 'block'; }
+
+    function handleLogin() {
+      hideError('loginError');
+      const mobile = document.getElementById('loginMobile').value.trim();
+      const pwd = document.getElementById('loginPassword').value;
+      if (!mobile || !pwd) return showError('loginError', 'Enter login ID and password');
+      const db = getDB();
+      const user = db.users[mobile];
+      if (!user || user.password !== pwd) return showError('loginError', 'Invalid login ID or password');
+      const status = checkExpiry(user);
+      user.status = status;
+      saveDB(db);
+      currentUser = user;
+      if (status === 'expired') {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('expiredOverlay').classList.add('show');
+        return;
+      }
+      enterApp();
+    }
+
+    function handleRegister() {
+      hideError('regError');
+      const name = document.getElementById('regName').value.trim();
+      const mobile = document.getElementById('regMobile').value.trim();
+      const dob = document.getElementById('regDOB').value;
+      const pwd = document.getElementById('regPassword').value;
+      const conf = document.getElementById('regConfirm').value;
+      if (!name || !mobile || !dob || !pwd) return showError('regError', 'All fields are required');
+      if (!/^\d{10}$/.test(mobile)) return showError('regError', 'Enter valid 10-digit mobile number');
+      if (pwd.length < 6) return showError('regError', 'Password must be at least 6 characters');
+      if (pwd !== conf) return showError('regError', 'Passwords do not match');
+      const db = getDB();
+      // Check if mobile already used
+      for (let k in db.users) {
+        if (db.users[k].mobile === mobile) return showError('regError', 'This mobile number is already registered');
+      }
+      const expiry = new Date();
+      expiry.setDate(expiry.getDate() + 30);
+      db.users[mobile] = {
+        name, mobile, password: pwd, dob, role: 'user',
+        registeredAt: new Date().toISOString(),
+        expiryAt: expiry.toISOString(),
+        status: 'active'
+      };
+      saveDB(db);
+      showSuccess('regSuccess', 'Registration successful! Your account is valid for 30 days. Please login.');
+      document.getElementById('regError').style.display = 'none';
+      setTimeout(() => showLogin(), 2000);
+    }
+
+    function handleReset() {
+      hideError('resetError');
+      const mobile = document.getElementById('resetMobile').value.trim();
+      const dob = document.getElementById('resetDOB').value;
+      const pwd = document.getElementById('resetPassword').value;
+      if (!mobile || !dob || !pwd) return showError('resetError', 'All fields required');
+      if (pwd.length < 6) return showError('resetError', 'Password must be at least 6 characters');
+      const db = getDB();
+      const user = db.users[mobile];
+      if (!user) return showError('resetError', 'Mobile number not registered');
+      if (user.dob !== dob) return showError('resetError', 'Date of birth does not match. This is your recovery key.');
+      user.password = pwd;
+      saveDB(db);
+      showSuccess('resetSuccess', 'Password reset successful! Please login.');
+      setTimeout(() => showLogin(), 2000);
+    }
+
+    function enterApp() {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('appContainer').style.display = 'block';
+      const badge = document.getElementById('userBadge');
+      badge.textContent = currentUser.name + (currentUser.role === 'admin' ? ' (Admin)' : '');
+      badge.className = 'user-badge' + (currentUser.role === 'admin' ? ' admin' : '');
+      if (currentUser.role !== 'admin') document.getElementById('navUsers').style.display = 'none';
+      document.getElementById('setName').value = currentUser.name;
+      document.getElementById('setMobile').value = currentUser.mobile;
+      document.getElementById('setRole').value = currentUser.role;
+      document.getElementById('setExpiry').value = currentUser.role === 'admin' ? 'Unlimited' : new Date(currentUser.expiryAt).toLocaleDateString();
+      refreshUsersTable();
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      document.getElementById('appContainer').style.display = 'none';
+      document.getElementById('expiredOverlay').classList.remove('show');
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('loginMobile').value = '';
+      document.getElementById('loginPassword').value = '';
+    }
+
+    // ============================================================
+    // NAVIGATION
+    // ============================================================
+    document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+      item.addEventListener('click', () => navigateTo(item.dataset.page));
+    });
+
+    function navigateTo(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
+    }
+
+    // ============================================================
+    // USER MANAGEMENT
+    // ============================================================
+    function refreshUsersTable() {
+      const db = getDB();
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = '';
+      for (let k in db.users) {
+        const u = db.users[k];
+        const status = checkExpiry(u);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+      <td>${u.name}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:12px">${u.mobile}</td>
+      <td><span class="badge ${u.role === 'admin' ? 'badge-admin' : 'badge-active'}">${u.role}</span></td>
+      <td>${new Date(u.registeredAt).toLocaleDateString()}</td>
+      <td>${u.role === 'admin' ? 'Unlimited' : new Date(u.expiryAt).toLocaleDateString()}</td>
+      <td><span class="badge ${status === 'active' ? 'badge-active' : 'badge-expired'}">${status}</span></td>
+      <td>${u.role !== 'admin' ? `<button class="btn btn-sm btn-secondary" onclick="renewUser('${k}')">Renew</button> <button class="btn btn-sm btn-danger" onclick="deleteUser('${k}')">Delete</button>` : ''}</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function showAddUser() { document.getElementById('addUserModal').classList.add('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    function addUser() {
+      hideError('addUserError');
+      const name = document.getElementById('addUserName').value.trim();
+      const mobile = document.getElementById('addUserMobile').value.trim();
+      const dob = document.getElementById('addUserDOB').value;
+      const pwd = document.getElementById('addUserPwd').value;
+      const role = document.getElementById('addUserRole').value;
+      const days = parseInt(document.getElementById('addUserDays').value) || 30;
+      if (!name || !mobile || !dob || !pwd) return showError('addUserError', 'All fields required');
+      if (!/^\d{10}$/.test(mobile)) return showError('addUserError', 'Enter valid 10-digit mobile');
+      const db = getDB();
+      if (db.users[mobile]) return showError('addUserError', 'Mobile already registered');
+      const expiry = new Date(); expiry.setDate(expiry.getDate() + days);
+      db.users[mobile] = { name, mobile, password: pwd, dob, role, registeredAt: new Date().toISOString(), expiryAt: expiry.toISOString(), status: 'active' };
+      saveDB(db);
+      refreshUsersTable();
+      closeModal('addUserModal');
+    }
+
+    function renewUser(k) {
+      const days = prompt('Enter renewal period in days:', '30');
+      if (!days) return;
+      const db = getDB();
+      const expiry = new Date(); expiry.setDate(expiry.getDate() + parseInt(days));
+      db.users[k].expiryAt = expiry.toISOString();
+      db.users[k].status = 'active';
+      saveDB(db);
+      refreshUsersTable();
+    }
+
+    function deleteUser(k) {
+      if (!confirm('Delete this user?')) return;
+      const db = getDB();
+      delete db.users[k];
+      saveDB(db);
+      refreshUsersTable();
+    }
+
+    function changePassword() {
+      hideError('pwdError');
+      const cur = document.getElementById('curPwd').value;
+      const nw = document.getElementById('newPwd').value;
+      if (!cur || !nw) return showError('pwdError', 'Fill both fields');
+      if (cur !== currentUser.password) return showError('pwdError', 'Current password incorrect');
+      if (nw.length < 6) return showError('pwdError', 'New password must be at least 6 characters');
+      const db = getDB();
+      db.users[currentUser.mobile].password = nw;
+      currentUser.password = nw;
+      saveDB(db);
+      showSuccess('pwdSuccess', 'Password updated successfully');
+      document.getElementById('curPwd').value = '';
+      document.getElementById('newPwd').value = '';
+    }
+
+    // ============================================================
+    // UTILITY FUNCTIONS
+    // ============================================================
+    function readExcel(file, callback) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
+        callback(wb);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function formatDate(d) {
+      if (!d) return '';
+      if (typeof d === 'string') {
+        // Try parsing dd/mm/yyyy
+        const parts = d.split('/');
+        if (parts.length === 3) {
+          return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        }
+        return d;
+      }
+      if (d instanceof Date) {
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      }
+      return String(d);
+    }
+
+    function parseNum(v) {
+      if (v === null || v === undefined || v === '') return 0;
+      const n = parseFloat(String(v).replace(/,/g, ''));
+      return isNaN(n) ? 0 : n;
+    }
+
+    function makeExcelAndDownload(rows, headers, filename) {
+      const wsData = [headers, ...rows];
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+      // Set column widths
+      ws['!cols'] = headers.map(h => ({ wch: Math.max(h.length + 2, 14) }));
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Accounting Voucher');
+      XLSX.writeFile(wb, filename);
+    }
+
+    function downloadXML(xmlStr, filename) {
+      const blob = new Blob([xmlStr], { type: 'application/xml' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    }
+
+    function renderPreviewTable(containerId, headers, rows, maxRows = 20) {
+      const wrap = document.getElementById(containerId);
+      let html = '<table class="preview-table"><thead><tr>';
+      headers.forEach(h => html += `<th>${h}</th>`);
+      html += '</tr></thead><tbody>';
+      rows.slice(0, maxRows).forEach(r => {
+        html += '<tr>';
+        r.forEach(c => html += `<td>${c ?? ''}</td>`);
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      wrap.innerHTML = html;
+    }
+
+    function renderStats(containerId, stats) {
+      const el = document.getElementById(containerId);
+      el.innerHTML = stats.map(s => `
+    <div class="stat-card">
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-value ${s.color || 'blue'}">${s.value}</div>
+    </div>`).join('');
+    }
+
+    // ============================================================
+    // SALES REGISTER CONVERTER
+    // ============================================================
+    function handleSalesUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      document.getElementById('salesFileName').textContent = '✓ ' + file.name;
+      document.getElementById('salesFileName').style.display = 'block';
+      readExcel(file, (wb) => {
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        salesData = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        document.getElementById('salesConfig').classList.remove('hidden');
+        renderStats('salesStats', [
+          { label: 'Total Invoices', value: salesData.length, color: 'blue' },
+          { label: 'Total Amount', value: '₹' + salesData.reduce((s, r) => s + parseNum(r['Sum of Total']), 0).toLocaleString('en-IN', { maximumFractionDigits: 2 }), color: 'green' },
+          { label: 'CGST', value: '₹' + salesData.reduce((s, r) => s + parseNum(r['Sum of CGST']), 0).toLocaleString('en-IN', { maximumFractionDigits: 2 }), color: 'purple' },
+          { label: 'SGST', value: '₹' + salesData.reduce((s, r) => s + parseNum(r['Sum of SGST']), 0).toLocaleString('en-IN', { maximumFractionDigits: 2 }), color: 'purple' },
+          { label: 'IGST', value: '₹' + salesData.reduce((s, r) => s + parseNum(r['Sum of IGST']), 0).toLocaleString('en-IN', { maximumFractionDigits: 2 }), color: 'orange' }
+        ]);
+      });
+    }
+
+    function buildSalesVouchers() {
+      const voucherDate = document.getElementById('salesVoucherDate').value;
+      const salesLocal = document.getElementById('salesLedgerLocal').value;
+      const salesInter = document.getElementById('salesLedgerInterstate').value;
+      const cgstLedger = document.getElementById('salesCGST').value;
+      const sgstLedger = document.getElementById('salesSGST').value;
+      const igstLedger = document.getElementById('salesIGST').value;
+      const discLedger = document.getElementById('salesDiscount').value;
+      const roundLedger = document.getElementById('salesRoundOff').value;
+
+      const rows = [];
+      salesData.forEach(inv => {
+        const billNo = inv['Bill No'] || '';
+        const ledger = inv['Ledger'] || '';
+        const stockItem = inv['Stock Item'] || '';
+        const totalAmt = parseNum(inv['Sum of Total Amount']);
+        const discAmt = parseNum(inv['Sum of Disc Amt']);
+        const sgst = parseNum(inv['Sum of SGST']);
+        const cgst = parseNum(inv['Sum of CGST']);
+        const igst = parseNum(inv['Sum of IGST']);
+        const total = parseNum(inv['Sum of Total']);
+        const roundOff = parseNum(inv['Sum of Round']);
+        const isInterstate = igst > 0 && cgst === 0;
+        const salesLedger = isInterstate ? salesInter : salesLocal;
+        const taxableValue = totalAmt;
+
+        // Row 1: Party (Dr)
+        rows.push([voucherDate || '', billNo, ledger, total, 'Dr', '', '', '', '', 'Item Invoice']);
+        // Row 2: Sales Ledger (Cr) with inventory
+        rows.push(['', '', salesLedger, taxableValue, 'Cr', stockItem, '', '', taxableValue, '']);
+        // Discount
+        if (discAmt > 0) rows.push(['', '', discLedger, discAmt, 'Dr', '', '', '', '', '']);
+        // Tax lines
+        if (!isInterstate) {
+          if (cgst > 0) rows.push(['', '', cgstLedger, cgst, 'Cr', '', '', '', '', '']);
+          if (sgst > 0) rows.push(['', '', sgstLedger, sgst, 'Cr', '', '', '', '', '']);
+        } else {
+          if (igst > 0) rows.push(['', '', igstLedger, igst, 'Cr', '', '', '', '', '']);
+        }
+        // Round off
+        if (roundOff !== 0) {
+          const drCr = roundOff > 0 ? 'Dr' : 'Cr';
+          rows.push(['', '', roundLedger, Math.abs(roundOff), drCr, '', '', '', '', '']);
+        }
+      });
+      return rows;
+    }
+
+    function previewSales() {
+      if (!salesData) return;
+      const rows = buildSalesVouchers();
+      const headers = ['Voucher Date', 'Voucher Number', 'Ledger Name', 'Ledger Amount', 'Dr/Cr', 'Item Name', 'Billed Qty', 'Item Rate', 'Item Amount', 'Change Mode'];
+      renderPreviewTable('salesPreview', headers, rows);
+      document.getElementById('salesPreviewCard').style.display = 'block';
+    }
+
+    function buildSalesXML() {
+      const voucherDate = document.getElementById('salesVoucherDate').value;
+      const salesLocal = document.getElementById('salesLedgerLocal').value;
+      const salesInter = document.getElementById('salesLedgerInterstate').value;
+      const cgstLedger = document.getElementById('salesCGST').value;
+      const sgstLedger = document.getElementById('salesSGST').value;
+      const igstLedger = document.getElementById('salesIGST').value;
+      const discLedger = document.getElementById('salesDiscount').value;
+      const roundLedger = document.getElementById('salesRoundOff').value;
+
+      let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<ENVELOPE>\n<HEADER>\n<TALLYREQUEST>Import Data</TALLYREQUEST>\n</HEADER>\n<BODY>\n<IMPORTDATA>\n<REQUESTDESC>\n<REPORTNAME>Vouchers</REPORTNAME>\n<STATICVARIABLES>\n<SVCURRENTCOMPANY/>\n</STATICVARIABLES>\n</REQUESTDESC>\n<REQUESTDATA>\n';
+
+      salesData.forEach(inv => {
+        const billNo = inv['Bill No'] || '';
+        const ledger = inv['Ledger'] || '';
+        const stockItem = inv['Stock Item'] || '';
+        const totalAmt = parseNum(inv['Sum of Total Amount']);
+        const discAmt = parseNum(inv['Sum of Disc Amt']);
+        const sgst = parseNum(inv['Sum of SGST']);
+        const cgst = parseNum(inv['Sum of CGST']);
+        const igst = parseNum(inv['Sum of IGST']);
+        const total = parseNum(inv['Sum of Total']);
+        const roundOff = parseNum(inv['Sum of Round']);
+        const isInterstate = igst > 0 && cgst === 0;
+        const salesLedger = isInterstate ? salesInter : salesLocal;
+        const goldWt = parseNum(inv['Sum of Gold Net Wt']);
+        const silverWt = parseNum(inv['Sum of Silver Net Wt']);
+        const dt = voucherDate || formatDate(new Date());
+
+        xml += `<TALLYMESSAGE xmlns:UDF="TallyUDF">\n<VOUCHER VCHTYPE="Sales" ACTION="Create" OBJVIEW="Invoice Voucher View">\n`;
+        xml += `<DATE>${dt.replace(/-/g, '')}</DATE>\n<VOUCHERTYPENAME>Sales</VOUCHERTYPENAME>\n<VOUCHERNUMBER>${billNo}</VOUCHERNUMBER>\n`;
+        xml += `<REFERENCE>${billNo}</REFERENCE>\n<NARRATION>Sales Invoice ${billNo} - ${ledger}</NARRATION>\n<PARTYLEDGERNAME>${ledger}</PARTYLEDGERNAME>\n`;
+        xml += `<PERSISTEDVIEW>Invoice Voucher View</PERSISTEDVIEW>\n`;
+
+        // Inventory entry
+        xml += `<INVENTORYENTRIES.LIST>\n<STOCKITEMNAME>${stockItem}</STOCKITEMNAME>\n`;
+        xml += `<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>\n<RATE>${totalAmt}</RATE>\n<AMOUNT>-${totalAmt}</AMOUNT>\n`;
+        xml += `<ACTUALQTY>${goldWt || silverWt || 1}</ACTUALQTY>\n<BILLEDQTY>${goldWt || silverWt || 1}</BILLEDQTY>\n`;
+        xml += `<ACCOUNTINGALLOCATIONS.LIST>\n<LEDGERNAME>${salesLedger}</LEDGERNAME>\n<AMOUNT>-${totalAmt}</AMOUNT>\n</ACCOUNTINGALLOCATIONS.LIST>\n`;
+        xml += `</INVENTORYENTRIES.LIST>\n`;
+
+        // Party
+        xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${ledger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>\n<AMOUNT>${total}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+
+        // Discount
+        if (discAmt > 0) {
+          xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${discLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>\n<AMOUNT>${discAmt}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+        }
+
+        // Tax
+        if (!isInterstate) {
+          if (cgst > 0) xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${cgstLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>\n<AMOUNT>-${cgst}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+          if (sgst > 0) xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${sgstLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>\n<AMOUNT>-${sgst}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+        } else {
+          if (igst > 0) xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${igstLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>\n<AMOUNT>-${igst}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+        }
+
+        // Round off
+        if (roundOff !== 0) {
+          const amt = roundOff > 0 ? roundOff : -Math.abs(roundOff);
+          xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${roundLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>${roundOff > 0 ? 'Yes' : 'No'}</ISDEEMEDPOSITIVE>\n<AMOUNT>${amt}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+        }
+
+        xml += `</VOUCHER>\n</TALLYMESSAGE>\n`;
+      });
+      xml += '</REQUESTDATA>\n</IMPORTDATA>\n</BODY>\n</ENVELOPE>';
+      return xml;
+    }
+
+    function convertSales() {
+      if (!salesData) return alert('Upload a file first');
+      const fmt = document.getElementById('salesOutputFormat').value;
+      if (fmt === 'excel' || fmt === 'both') {
+        const rows = buildSalesVouchers();
+        const headers = ['Voucher Date', 'Voucher Number', 'Ledger Name', 'Ledger Amount', 'Ledger Amount Dr/Cr', 'Item Name', 'Billed Quantity', 'Item Rate', 'Item Amount', 'Change Mode '];
+        makeExcelAndDownload(rows, headers, 'Sales_Tally_Template.xlsx');
+      }
+      if (fmt === 'xml' || fmt === 'both') {
+        setTimeout(() => downloadXML(buildSalesXML(), 'Sales_Tally_Import.xml'), 300);
+      }
+    }
+
+    // ============================================================
+    // GSTR-2B CONVERTER
+    // ============================================================
+    function handleGSTR2BUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      document.getElementById('gstr2bFileName').textContent = '✓ ' + file.name;
+      document.getElementById('gstr2bFileName').style.display = 'block';
+      readExcel(file, (wb) => {
+        gstr2bData = { wb, sheets: wb.SheetNames };
+        document.getElementById('gstr2bConfig').classList.remove('hidden');
+
+        // Parse B2B sheet
+        let b2bRows = [];
+        if (wb.SheetNames.includes('B2B')) {
+          const ws = wb.Sheets['B2B'];
+          const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+          // Find header row (row with 'GSTIN of supplier')
+          let headerIdx = -1;
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].some(c => String(c).includes('GSTIN of supplier'))) { headerIdx = i; break; }
+          }
+          if (headerIdx >= 0) {
+            // Next row is sub-headers, data starts after
+            for (let i = headerIdx + 2; i < data.length; i++) {
+              if (data[i][0] && String(data[i][0]).length > 5) b2bRows.push(data[i]);
+            }
+          }
+        }
+
+        // Parse B2B-CDNR
+        let cdnrRows = [];
+        if (wb.SheetNames.includes('B2B-CDNR')) {
+          const ws = wb.Sheets['B2B-CDNR'];
+          const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+          let headerIdx = -1;
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].some(c => String(c).includes('GSTIN of supplier'))) { headerIdx = i; break; }
+          }
+          if (headerIdx >= 0) {
+            for (let i = headerIdx + 2; i < data.length; i++) {
+              if (data[i][0] && String(data[i][0]).length > 5) cdnrRows.push(data[i]);
+            }
+          }
+        }
+
+        gstr2bData.b2b = b2bRows;
+        gstr2bData.cdnr = cdnrRows;
+
+        const totalTaxable = b2bRows.reduce((s, r) => s + parseNum(r[8]), 0);
+        const totalIGST = b2bRows.reduce((s, r) => s + parseNum(r[9]), 0);
+        const totalCGST = b2bRows.reduce((s, r) => s + parseNum(r[10]), 0);
+        const totalSGST = b2bRows.reduce((s, r) => s + parseNum(r[11]), 0);
+
+        renderStats('gstr2bStats', [
+          { label: 'B2B Invoices', value: b2bRows.length, color: 'blue' },
+          { label: 'CDNR Notes', value: cdnrRows.length, color: 'purple' },
+          { label: 'Taxable Value', value: '₹' + totalTaxable.toLocaleString('en-IN', { maximumFractionDigits: 2 }), color: 'green' },
+          { label: 'Total Tax', value: '₹' + (totalIGST + totalCGST + totalSGST).toLocaleString('en-IN', { maximumFractionDigits: 2 }), color: 'orange' }
+        ]);
+      });
+    }
+
+    function buildGSTR2BVouchers() {
+      const purchaseLedger = document.getElementById('gstr2bPurchase').value;
+      const cgstLedger = document.getElementById('gstr2bCGST').value;
+      const sgstLedger = document.getElementById('gstr2bSGST').value;
+      const igstLedger = document.getElementById('gstr2bIGST').value;
+      const voucherType = document.getElementById('gstr2bVoucherType').value;
+      const rows = [];
+
+      // B2B invoices
+      (gstr2bData.b2b || []).forEach(inv => {
+        const gstin = inv[0] || '';
+        const name = inv[1] || '';
+        const invNo = inv[2] || '';
+        const invDate = inv[4] || '';
+        const invValue = parseNum(inv[5]);
+        const taxableValue = parseNum(inv[8]);
+        const igst = parseNum(inv[9]);
+        const cgst = parseNum(inv[10]);
+        const sgst = parseNum(inv[11]);
+        const dt = formatDate(invDate);
+        const partyName = name || gstin;
+        const narration = `Pur: ${invNo} dt ${invDate} - ${partyName}`;
+
+        // Party (Cr)
+        rows.push([dt, voucherType, invNo, '', '', partyName, invValue, 'Cr', '', '', '', '', '', '']);
+        // Purchase (Dr)
+        rows.push(['', '', '', '', '', purchaseLedger, taxableValue, 'Dr', '', '', '', '', '', '']);
+        // IGST
+        if (igst > 0) rows.push(['', '', '', '', '', igstLedger, igst, 'Dr', '', '', '', '', '', '']);
+        // CGST
+        if (cgst > 0) rows.push(['', '', '', '', '', cgstLedger, cgst, 'Dr', '', '', '', '', '', '']);
+        // SGST
+        if (sgst > 0) rows.push(['', '', '', '', '', sgstLedger, sgst, 'Dr', '', '', '', '', '', '']);
+      });
+
+      // CDNR (Credit/Debit Notes)
+      (gstr2bData.cdnr || []).forEach(note => {
+        const gstin = note[0] || '';
+        const name = note[1] || '';
+        const noteNo = note[2] || '';
+        const noteType = note[3] || '';
+        const noteDate = note[5] || '';
+        const noteValue = parseNum(note[6]);
+        const taxableValue = parseNum(note[9]);
+        const igst = parseNum(note[10]);
+        const cgst = parseNum(note[11]);
+        const sgst = parseNum(note[12]);
+        const dt = formatDate(noteDate);
+        const partyName = name || gstin;
+        const isCredit = String(noteType).toLowerCase().includes('credit') || String(noteType).toLowerCase() === 'c';
+
+        if (isCredit) {
+          // Debit Note (return to supplier)
+          rows.push([dt, 'Debit Note', noteNo, '', '', partyName, noteValue, 'Dr', '', '', '', '', '', '']);
+          rows.push(['', '', '', '', '', purchaseLedger, taxableValue, 'Cr', '', '', '', '', '', '']);
+          if (igst > 0) rows.push(['', '', '', '', '', igstLedger, igst, 'Cr', '', '', '', '', '', '']);
+          if (cgst > 0) rows.push(['', '', '', '', '', cgstLedger, cgst, 'Cr', '', '', '', '', '', '']);
+          if (sgst > 0) rows.push(['', '', '', '', '', sgstLedger, sgst, 'Cr', '', '', '', '', '', '']);
+        } else {
+          rows.push([dt, voucherType, noteNo, '', '', partyName, noteValue, 'Cr', '', '', '', '', '', '']);
+          rows.push(['', '', '', '', '', purchaseLedger, taxableValue, 'Dr', '', '', '', '', '', '']);
+          if (igst > 0) rows.push(['', '', '', '', '', igstLedger, igst, 'Dr', '', '', '', '', '', '']);
+          if (cgst > 0) rows.push(['', '', '', '', '', cgstLedger, cgst, 'Dr', '', '', '', '', '', '']);
+          if (sgst > 0) rows.push(['', '', '', '', '', sgstLedger, sgst, 'Dr', '', '', '', '', '', '']);
+        }
+      });
+
+      return rows;
+    }
+
+    function buildGSTR2BXML() {
+      const purchaseLedger = document.getElementById('gstr2bPurchase').value;
+      const cgstLedger = document.getElementById('gstr2bCGST').value;
+      const sgstLedger = document.getElementById('gstr2bSGST').value;
+      const igstLedger = document.getElementById('gstr2bIGST').value;
+
+      let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<ENVELOPE>\n<HEADER>\n<TALLYREQUEST>Import Data</TALLYREQUEST>\n</HEADER>\n<BODY>\n<IMPORTDATA>\n<REQUESTDESC>\n<REPORTNAME>Vouchers</REPORTNAME>\n<STATICVARIABLES>\n<SVCURRENTCOMPANY/>\n</STATICVARIABLES>\n</REQUESTDESC>\n<REQUESTDATA>\n';
+
+      (gstr2bData.b2b || []).forEach(inv => {
+        const gstin = inv[0] || '';
+        const name = inv[1] || '';
+        const invNo = inv[2] || '';
+        const invDate = inv[4] || '';
+        const invValue = parseNum(inv[5]);
+        const taxableValue = parseNum(inv[8]);
+        const igst = parseNum(inv[9]);
+        const cgst = parseNum(inv[10]);
+        const sgst = parseNum(inv[11]);
+        const dt = formatDate(invDate).replace(/-/g, '');
+        const partyName = name || gstin;
+
+        xml += `<TALLYMESSAGE xmlns:UDF="TallyUDF">\n<VOUCHER VCHTYPE="Purchase" ACTION="Create" OBJVIEW="Invoice Voucher View">\n`;
+        xml += `<DATE>${dt}</DATE>\n<VOUCHERTYPENAME>Purchase</VOUCHERTYPENAME>\n<VOUCHERNUMBER>${invNo}</VOUCHERNUMBER>\n`;
+        xml += `<REFERENCE>${invNo}</REFERENCE>\n<NARRATION>Purchase from ${partyName} | Inv: ${invNo} | GSTIN: ${gstin}</NARRATION>\n`;
+        xml += `<PARTYLEDGERNAME>${partyName}</PARTYLEDGERNAME>\n<PERSISTEDVIEW>Invoice Voucher View</PERSISTEDVIEW>\n`;
+
+        xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${partyName}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>\n<AMOUNT>-${invValue}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+        xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${purchaseLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>\n<AMOUNT>${taxableValue}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+        if (igst > 0) xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${igstLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>\n<AMOUNT>${igst}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+        if (cgst > 0) xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${cgstLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>\n<AMOUNT>${cgst}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+        if (sgst > 0) xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${sgstLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>\n<AMOUNT>${sgst}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+        xml += `</VOUCHER>\n</TALLYMESSAGE>\n`;
+      });
+
+      xml += '</REQUESTDATA>\n</IMPORTDATA>\n</BODY>\n</ENVELOPE>';
+      return xml;
+    }
+
+    function previewGSTR2B() {
+      if (!gstr2bData) return;
+      const rows = buildGSTR2BVouchers();
+      const headers = ['Voucher Date', 'Voucher Type Name', 'Voucher Number', 'Buyer/Supplier - Address', 'Buyer/Supplier - Pincode', 'Ledger Name', 'Ledger Amount', 'Ledger Amount Dr/Cr', 'Item Name', 'Billed Quantity', 'Item Rate', 'Item Rate per', 'Item Amount', 'Change Mode '];
+      renderPreviewTable('gstr2bPreview', headers, rows);
+      document.getElementById('gstr2bPreviewCard').style.display = 'block';
+    }
+
+    function convertGSTR2B() {
+      if (!gstr2bData) return alert('Upload a file first');
+      const fmt = document.getElementById('gstr2bOutputFormat').value;
+      if (fmt === 'excel' || fmt === 'both') {
+        const rows = buildGSTR2BVouchers();
+        const headers = ['Voucher Date', 'Voucher Type Name', 'Voucher Number', 'Buyer/Supplier - Address', 'Buyer/Supplier - Pincode', 'Ledger Name', 'Ledger Amount', 'Ledger Amount Dr/Cr', 'Item Name', 'Billed Quantity', 'Item Rate', 'Item Rate per', 'Item Amount', 'Change Mode '];
+        makeExcelAndDownload(rows, headers, 'GSTR2B_Tally_Template.xlsx');
+      }
+      if (fmt === 'xml' || fmt === 'both') {
+        setTimeout(() => downloadXML(buildGSTR2BXML(), 'GSTR2B_Tally_Import.xml'), 300);
+      }
+    }
+
+    // ============================================================
+    // BANK STATEMENT CONVERTER
+    // ============================================================
+    function handleBankUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      document.getElementById('bankFileName').textContent = '✓ ' + file.name;
+      document.getElementById('bankFileName').style.display = 'block';
+      readExcel(file, (wb) => {
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        // Find header row
+        let headerRow = 0;
+        for (let i = 0; i < Math.min(10, data.length); i++) {
+          if (data[i].filter(c => c !== '').length >= 3) { headerRow = i; break; }
+        }
+        bankData = { raw: data, headerRow, headers: data[headerRow] };
+        document.getElementById('bankConfig').classList.remove('hidden');
+
+        // Populate column dropdowns
+        const cols = bankData.headers.map((h, i) => ({ idx: i, name: h || `Col ${i + 1}` }));
+        ['bankColDate', 'bankColDesc', 'bankColDebit', 'bankColCredit', 'bankColRef'].forEach(id => {
+          const sel = document.getElementById(id);
+          sel.innerHTML = '<option value="">-- Select --</option>';
+          cols.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.idx;
+            opt.textContent = c.name;
+            sel.appendChild(opt);
+          });
+        });
+
+        // Auto-detect columns
+        cols.forEach(c => {
+          const n = String(c.name).toLowerCase();
+          if (n.includes('date') && !n.includes('value')) document.getElementById('bankColDate').value = c.idx;
+          if (n.includes('description') || n.includes('narration') || n.includes('particular')) document.getElementById('bankColDesc').value = c.idx;
+          if (n.includes('debit') || n.includes('withdrawal')) document.getElementById('bankColDebit').value = c.idx;
+          if (n.includes('credit') || n.includes('deposit')) document.getElementById('bankColCredit').value = c.idx;
+          if (n.includes('ref') || n.includes('cheque') || n.includes('chq')) document.getElementById('bankColRef').value = c.idx;
+        });
+
+        const dataRows = data.slice(headerRow + 1).filter(r => r.some(c => c !== ''));
+        renderStats('bankStats', [
+          { label: 'Total Transactions', value: dataRows.length, color: 'blue' },
+          { label: 'Columns Detected', value: bankData.headers.filter(h => h).length, color: 'green' }
+        ]);
+      });
+    }
+
+    function buildBankVouchers() {
+      const dateCol = parseInt(document.getElementById('bankColDate').value);
+      const descCol = parseInt(document.getElementById('bankColDesc').value);
+      const debitCol = parseInt(document.getElementById('bankColDebit').value);
+      const creditCol = parseInt(document.getElementById('bankColCredit').value);
+      const refCol = document.getElementById('bankColRef').value ? parseInt(document.getElementById('bankColRef').value) : -1;
+      const bankLedger = document.getElementById('bankLedger').value;
+      const payLedger = document.getElementById('bankPayLedger').value;
+      const recLedger = document.getElementById('bankRecLedger').value;
+
+      const rows = [];
+      const dataRows = bankData.raw.slice(bankData.headerRow + 1).filter(r => r.some(c => c !== ''));
+
+      dataRows.forEach(r => {
+        const dt = formatDate(r[dateCol]);
+        const desc = String(r[descCol] || '');
+        const debit = parseNum(r[debitCol]);
+        const credit = parseNum(r[creditCol]);
+        const ref = refCol >= 0 ? String(r[refCol] || '') : '';
+        const narration = desc + (ref ? ' | Ref: ' + ref : '');
+
+        if (debit > 0) {
+          // Payment
+          rows.push([dt, 'Payment', '', '', '', bankLedger, debit, 'Cr', '', '', '', '', '', '']);
+          rows.push(['', '', '', '', '', payLedger, debit, 'Dr', '', '', '', '', '', '']);
+        } else if (credit > 0) {
+          // Receipt
+          rows.push([dt, 'Receipt', '', '', '', bankLedger, credit, 'Dr', '', '', '', '', '', '']);
+          rows.push(['', '', '', '', '', recLedger, credit, 'Cr', '', '', '', '', '', '']);
+        }
+      });
+      return rows;
+    }
+
+    function buildBankXML() {
+      const dateCol = parseInt(document.getElementById('bankColDate').value);
+      const descCol = parseInt(document.getElementById('bankColDesc').value);
+      const debitCol = parseInt(document.getElementById('bankColDebit').value);
+      const creditCol = parseInt(document.getElementById('bankColCredit').value);
+      const refCol = document.getElementById('bankColRef').value ? parseInt(document.getElementById('bankColRef').value) : -1;
+      const bankLedger = document.getElementById('bankLedger').value;
+      const payLedger = document.getElementById('bankPayLedger').value;
+      const recLedger = document.getElementById('bankRecLedger').value;
+
+      let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<ENVELOPE>\n<HEADER>\n<TALLYREQUEST>Import Data</TALLYREQUEST>\n</HEADER>\n<BODY>\n<IMPORTDATA>\n<REQUESTDESC>\n<REPORTNAME>Vouchers</REPORTNAME>\n<STATICVARIABLES>\n<SVCURRENTCOMPANY/>\n</STATICVARIABLES>\n</REQUESTDESC>\n<REQUESTDATA>\n';
+
+      const dataRows = bankData.raw.slice(bankData.headerRow + 1).filter(r => r.some(c => c !== ''));
+      dataRows.forEach(r => {
+        const dt = formatDate(r[dateCol]).replace(/-/g, '');
+        const desc = String(r[descCol] || '');
+        const debit = parseNum(r[debitCol]);
+        const credit = parseNum(r[creditCol]);
+        const ref = refCol >= 0 ? String(r[refCol] || '') : '';
+        const narration = desc + (ref ? ' | Ref: ' + ref : '');
+
+        if (debit > 0) {
+          xml += `<TALLYMESSAGE xmlns:UDF="TallyUDF">\n<VOUCHER VCHTYPE="Payment" ACTION="Create">\n`;
+          xml += `<DATE>${dt}</DATE>\n<VOUCHERTYPENAME>Payment</VOUCHERTYPENAME>\n`;
+          xml += `<REFERENCE>${ref}</REFERENCE>\n<NARRATION>${narration.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</NARRATION>\n`;
+          xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${bankLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>\n<AMOUNT>-${debit}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+          xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${payLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>\n<AMOUNT>${debit}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+          xml += `</VOUCHER>\n</TALLYMESSAGE>\n`;
+        } else if (credit > 0) {
+          xml += `<TALLYMESSAGE xmlns:UDF="TallyUDF">\n<VOUCHER VCHTYPE="Receipt" ACTION="Create">\n`;
+          xml += `<DATE>${dt}</DATE>\n<VOUCHERTYPENAME>Receipt</VOUCHERTYPENAME>\n`;
+          xml += `<REFERENCE>${ref}</REFERENCE>\n<NARRATION>${narration.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</NARRATION>\n`;
+          xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${bankLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>\n<AMOUNT>${credit}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+          xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${recLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>\n<AMOUNT>-${credit}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+          xml += `</VOUCHER>\n</TALLYMESSAGE>\n`;
+        }
+      });
+
+      xml += '</REQUESTDATA>\n</IMPORTDATA>\n</BODY>\n</ENVELOPE>';
+      return xml;
+    }
+
+    function previewBank() {
+      if (!bankData) return;
+      const rows = buildBankVouchers();
+      const headers = ['Voucher Date', 'Voucher Type Name', 'Voucher Number', 'Buyer/Supplier - Address', 'Buyer/Supplier - Pincode', 'Ledger Name', 'Ledger Amount', 'Ledger Amount Dr/Cr', 'Item Name', 'Billed Quantity', 'Item Rate', 'Item Rate per', 'Item Amount', 'Change Mode '];
+      renderPreviewTable('bankPreview', headers, rows);
+      document.getElementById('bankPreviewCard').style.display = 'block';
+    }
+
+    function convertBank() {
+      if (!bankData) return alert('Upload a file first');
+      const fmt = document.getElementById('bankOutputFormat').value;
+      if (fmt === 'excel' || fmt === 'both') {
+        const rows = buildBankVouchers();
+        const headers = ['Voucher Date', 'Voucher Type Name', 'Voucher Number', 'Buyer/Supplier - Address', 'Buyer/Supplier - Pincode', 'Ledger Name', 'Ledger Amount', 'Ledger Amount Dr/Cr', 'Item Name', 'Billed Quantity', 'Item Rate', 'Item Rate per', 'Item Amount', 'Change Mode '];
+        makeExcelAndDownload(rows, headers, 'BankStmt_Tally_Template.xlsx');
+      }
+      if (fmt === 'xml' || fmt === 'both') {
+        setTimeout(() => downloadXML(buildBankXML(), 'BankStmt_Tally_Import.xml'), 300);
+      }
+    }
+
+    // ============================================================
+    // GSTR-1 CONVERTER
+    // ============================================================
+    function handleGSTR1Upload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      document.getElementById('gstr1FileName').textContent = '✓ ' + file.name;
+      document.getElementById('gstr1FileName').style.display = 'block';
+
+      if (file.name.endsWith('.json')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const json = JSON.parse(e.target.result);
+            gstr1Data = { type: 'json', data: json };
+            document.getElementById('gstr1Config').classList.remove('hidden');
+            const b2b = json.b2b || [];
+            const totalInv = b2b.reduce((s, p) => s + (p.inv || []).length, 0);
+            renderStats('gstr1Stats', [
+              { label: 'B2B Parties', value: b2b.length, color: 'blue' },
+              { label: 'Total Invoices', value: totalInv, color: 'green' }
+            ]);
+          } catch (e) { alert('Invalid JSON file'); }
+        };
+        reader.readAsText(file);
+      } else {
+        readExcel(file, (wb) => {
+          gstr1Data = { type: 'excel', wb, sheets: wb.SheetNames };
+          document.getElementById('gstr1Config').classList.remove('hidden');
+
+          // Try to parse B2B sheet
+          let b2bRows = [];
+          const b2bSheet = wb.SheetNames.find(s => s.toLowerCase().includes('b2b') && !s.toLowerCase().includes('cdnr'));
+          if (b2bSheet) {
+            const data = XLSX.utils.sheet_to_json(wb.Sheets[b2bSheet], { header: 1, defval: '' });
+            let headerIdx = -1;
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].some(c => String(c).toLowerCase().includes('gstin'))) { headerIdx = i; break; }
+            }
+            if (headerIdx >= 0) {
+              for (let i = headerIdx + 1; i < data.length; i++) {
+                if (data[i][0] && String(data[i][0]).length > 3) b2bRows.push(data[i]);
+              }
+            }
+          }
+          gstr1Data.b2b = b2bRows;
+          renderStats('gstr1Stats', [
+            { label: 'Sheets Found', value: wb.SheetNames.length, color: 'blue' },
+            { label: 'B2B Invoices', value: b2bRows.length, color: 'green' }
+          ]);
+        });
+      }
+    }
+
+    function buildGSTR1Vouchers() {
+      const salesLedger = document.getElementById('gstr1Sales').value;
+      const cgstLedger = document.getElementById('gstr1CGST').value;
+      const sgstLedger = document.getElementById('gstr1SGST').value;
+      const igstLedger = document.getElementById('gstr1IGST').value;
+      const b2cParty = document.getElementById('gstr1B2C').value;
+      const rows = [];
+
+      if (gstr1Data.type === 'json') {
+        const b2b = gstr1Data.data.b2b || [];
+        b2b.forEach(party => {
+          const gstin = party.ctin || '';
+          (party.inv || []).forEach(inv => {
+            const invNo = inv.inum || '';
+            const invDate = inv.idt || '';
+            const invValue = parseNum(inv.val);
+            let totalTaxable = 0, totalIGST = 0, totalCGST = 0, totalSGST = 0;
+            (inv.itms || []).forEach(itm => {
+              const det = itm.itm_det || {};
+              totalTaxable += parseNum(det.txval);
+              totalIGST += parseNum(det.iamt);
+              totalCGST += parseNum(det.camt);
+              totalSGST += parseNum(det.samt);
+            });
+
+            rows.push([invDate, '', invNo, '', '', gstin, invValue, 'Dr', '', '', '', '', '', 'Item Invoice']);
+            rows.push(['', '', '', '', '', salesLedger, totalTaxable, 'Cr', '', '', '', '', '', '']);
+            if (totalIGST > 0) rows.push(['', '', '', '', '', igstLedger, totalIGST, 'Cr', '', '', '', '', '', '']);
+            if (totalCGST > 0) rows.push(['', '', '', '', '', cgstLedger, totalCGST, 'Cr', '', '', '', '', '', '']);
+            if (totalSGST > 0) rows.push(['', '', '', '', '', sgstLedger, totalSGST, 'Cr', '', '', '', '', '', '']);
+          });
+        });
+      } else if (gstr1Data.type === 'excel') {
+        (gstr1Data.b2b || []).forEach(r => {
+          const gstin = r[0] || '';
+          const invNo = r[2] || r[1] || '';
+          const invDate = r[3] || r[4] || '';
+          const invValue = parseNum(r[5] || r[4]);
+          const taxableValue = parseNum(r[8] || r[7] || r[6]);
+          const igst = parseNum(r[9] || 0);
+          const cgst = parseNum(r[10] || 0);
+          const sgst = parseNum(r[11] || 0);
+
+          rows.push([formatDate(invDate), '', invNo, '', '', gstin || b2cParty, invValue, 'Dr', '', '', '', '', '', '']);
+          rows.push(['', '', '', '', '', salesLedger, taxableValue, 'Cr', '', '', '', '', '', '']);
+          if (igst > 0) rows.push(['', '', '', '', '', igstLedger, igst, 'Cr', '', '', '', '', '', '']);
+          if (cgst > 0) rows.push(['', '', '', '', '', cgstLedger, cgst, 'Cr', '', '', '', '', '', '']);
+          if (sgst > 0) rows.push(['', '', '', '', '', sgstLedger, sgst, 'Cr', '', '', '', '', '', '']);
+        });
+      }
+      return rows;
+    }
+
+    function previewGSTR1() {
+      if (!gstr1Data) return;
+      const rows = buildGSTR1Vouchers();
+      const headers = ['Voucher Date', 'Voucher Type Name', 'Voucher Number', 'Buyer/Supplier - Address', 'Buyer/Supplier - Pincode', 'Ledger Name', 'Ledger Amount', 'Ledger Amount Dr/Cr', 'Item Name', 'Billed Quantity', 'Item Rate', 'Item Rate per', 'Item Amount', 'Change Mode '];
+      renderPreviewTable('gstr1Preview', headers, rows);
+      document.getElementById('gstr1PreviewCard').style.display = 'block';
+    }
+
+    function convertGSTR1() {
+      if (!gstr1Data) return alert('Upload a file first');
+      const fmt = document.getElementById('gstr1OutputFormat').value;
+      if (fmt === 'excel' || fmt === 'both') {
+        const rows = buildGSTR1Vouchers();
+        const headers = ['Voucher Date', 'Voucher Type Name', 'Voucher Number', 'Buyer/Supplier - Address', 'Buyer/Supplier - Pincode', 'Ledger Name', 'Ledger Amount', 'Ledger Amount Dr/Cr', 'Item Name', 'Billed Quantity', 'Item Rate', 'Item Rate per', 'Item Amount', 'Change Mode '];
+        makeExcelAndDownload(rows, headers, 'GSTR1_Tally_Template.xlsx');
+      }
+      if (fmt === 'xml' || fmt === 'both') {
+        let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<ENVELOPE>\n<HEADER>\n<TALLYREQUEST>Import Data</TALLYREQUEST>\n</HEADER>\n<BODY>\n<IMPORTDATA>\n<REQUESTDESC>\n<REPORTNAME>Vouchers</REPORTNAME>\n<STATICVARIABLES>\n<SVCURRENTCOMPANY/>\n</STATICVARIABLES>\n</REQUESTDESC>\n<REQUESTDATA>\n';
+
+        // Build XML from same data
+        const salesLedger = document.getElementById('gstr1Sales').value;
+        const cgstLedger = document.getElementById('gstr1CGST').value;
+        const sgstLedger = document.getElementById('gstr1SGST').value;
+        const igstLedger = document.getElementById('gstr1IGST').value;
+
+        if (gstr1Data.type === 'json') {
+          (gstr1Data.data.b2b || []).forEach(party => {
+            (party.inv || []).forEach(inv => {
+              let totalTaxable = 0, totalIGST = 0, totalCGST = 0, totalSGST = 0;
+              (inv.itms || []).forEach(itm => {
+                const d = itm.itm_det || {};
+                totalTaxable += parseNum(d.txval); totalIGST += parseNum(d.iamt); totalCGST += parseNum(d.camt); totalSGST += parseNum(d.samt);
+              });
+              xml += `<TALLYMESSAGE xmlns:UDF="TallyUDF">\n<VOUCHER VCHTYPE="Sales" ACTION="Create">\n`;
+              xml += `<DATE>${String(inv.idt || '').replace(/\//g, '').split('-').reverse().join('')}</DATE>\n<VOUCHERTYPENAME>Sales</VOUCHERTYPENAME>\n`;
+              xml += `<VOUCHERNUMBER>${inv.inum || ''}</VOUCHERNUMBER>\n<REFERENCE>${inv.inum || ''}</REFERENCE>\n`;
+              xml += `<NARRATION>GSTR-1 Sales: ${inv.inum} to ${party.ctin}</NARRATION>\n<PARTYLEDGERNAME>${party.ctin || ''}</PARTYLEDGERNAME>\n`;
+              xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${party.ctin || ''}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>\n<AMOUNT>${parseNum(inv.val)}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+              xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${salesLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>\n<AMOUNT>-${totalTaxable}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+              if (totalIGST > 0) xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${igstLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>\n<AMOUNT>-${totalIGST}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+              if (totalCGST > 0) xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${cgstLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>\n<AMOUNT>-${totalCGST}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+              if (totalSGST > 0) xml += `<LEDGERENTRIES.LIST>\n<LEDGERNAME>${sgstLedger}</LEDGERNAME>\n<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>\n<AMOUNT>-${totalSGST}</AMOUNT>\n</LEDGERENTRIES.LIST>\n`;
+              xml += `</VOUCHER>\n</TALLYMESSAGE>\n`;
+            });
+          });
+        }
+        xml += '</REQUESTDATA>\n</IMPORTDATA>\n</BODY>\n</ENVELOPE>';
+        setTimeout(() => downloadXML(xml, 'GSTR1_Tally_Import.xml'), 300);
+      }
+    }
+
+    // ============================================================
+    // DRAG & DROP
+    // ============================================================
+    ['salesUpload', 'gstr2bUpload', 'bankUpload', 'gstr1Upload'].forEach(id => {
+      const zone = document.getElementById(id);
+      if (!zone) return;
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+      zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        const fileInput = zone.parentElement.querySelector('input[type=file]');
+        if (e.dataTransfer.files.length) {
+          fileInput.files = e.dataTransfer.files;
+          fileInput.dispatchEvent(new Event('change'));
+        }
+      });
+    });
+
+    // Add forgot password link
+    document.querySelector('#loginForm .link-btn').insertAdjacentHTML('beforebegin',
+      '<button class="link-btn" onclick="showResetForm()" style="margin-top:6px">Forgot Password?</button>');
+
+    // Initialize
+    getDB();
+  </script>
+</body>
+
+</html>
